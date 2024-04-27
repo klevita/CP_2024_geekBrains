@@ -28,11 +28,20 @@ const messages = computed<Message[]>(() => {
   return [...[...messageStore.messages].reverse(), ...oldMessages.value]
 })
 
+const scrollContainer = ref<HTMLDivElement>()
+
+function listenScroll (e: Event) {
+  console.log(e)
+}
+
 watch(() => messageStore.currentRoomId, async () => {
   oldMessages.value = await MessageService.getMessages(0)
 })
 onMounted(() => {
   messageStore.connect()
+  if (scrollContainer.value) {
+    scrollContainer.value.addEventListener('scroll', listenScroll)
+  }
 })
 </script>
 <style scoped lang="scss">
