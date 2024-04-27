@@ -2,15 +2,21 @@ import { useUserStore } from 'src/stores/UserStore'
 import { messageHttpClient } from '../MessagesHttpClient'
 import { Message, useMessageStore } from 'src/stores/MessageStore'
 
+export interface Room {
+  id: number,
+  name: string
+}
+
 class MessageService {
   static async searchMessages (search: string) {
     const response = await messageHttpClient().get(`answer_questions.json?query=${search}`)
     return response
   }
 
-  static async getRooms (username: string) {
-    const response = await messageHttpClient().get(`rooms.json?username=${username}`)
-    return response
+  static async getRooms () {
+    const store = useUserStore()
+    const response = await messageHttpClient().get(`rooms.json?username=${store.user.username}`)
+    return response.data as Room[]
   }
 
   static async sendMessage (text:string) {

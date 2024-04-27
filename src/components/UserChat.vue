@@ -50,6 +50,8 @@ async function fetchMessages () {
 }
 
 watch(() => messageStore.currentRoomId, () => {
+  oldMessagesOffset = 0
+  oldMessages.value = []
   fetchMessages()
 })
 onMounted(() => {

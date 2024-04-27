@@ -34,6 +34,10 @@ export const useMessageStore = defineStore('messages', {
         this.currentRoomId = -1
         this.messages = []
       }
+    },
+    changeRoom (id: number) {
+      this.messages = []
+      this.currentRoomId = id
     }
   },
   getters: {

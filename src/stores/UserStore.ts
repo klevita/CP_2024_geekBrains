@@ -33,6 +33,9 @@ export const useUserStore = defineStore('user', {
       return (
         !!state.user.accessToken?.length && !!state.user.refreshToken?.length
       )
+    },
+    isAdmin (state) {
+      return state.user.username === 'admin'
     }
   },
   actions: {
@@ -40,7 +43,12 @@ export const useUserStore = defineStore('user', {
       const resp = await AuthService.logIn(login, password)
       if (resp.name !== 'AxiosError') {
         const parsedToken = parseToken(resp.data.access_token)
-        this.user.username = parsedToken.sub
+        if (parsedToken.sub === 'manager') {
+          this.user.username = 'admin'
+        } else {
+          this.user.username = parsedToken.sub
+        }
+
         this.user.roles = parsedToken.roles
         this.user.accessToken = resp.data.access_token
         this.user.refreshToken = resp.data.refresh_token

@@ -21,7 +21,9 @@ export function connect () {
     const resp = JSON.parse(e.data)
     if (resp.message && resp.message.kind) {
       if (resp.message.kind === 'new_message') {
-        messageStore.messages.push(resp.message.object)
+        if (resp.message.object.room_id === messageStore.currentRoomId) {
+          messageStore.messages.push(resp.message.object)
+        }
       }
       if (resp.message.kind === 'room_id') {
         messageStore.currentRoomId = resp.message.room_id
