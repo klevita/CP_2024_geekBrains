@@ -1,4 +1,17 @@
-// app global css in SCSS form
 .background{
   background-color: #e7e7e7;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+:-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 8px;
+  background-color: #827393;
+  border-radius: 20px;
 }

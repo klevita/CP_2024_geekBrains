@@ -45,6 +45,9 @@ export const useUserStore = defineStore('user', {
         this.user.accessToken = resp.data.access_token
         this.user.refreshToken = resp.data.refresh_token
       }
+    },
+    logout () {
+      this.user = {}
     }
   },
   persist: true
