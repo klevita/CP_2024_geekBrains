@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { connect } from './useSocket'
 
 export interface Message {
   created_at: string;
@@ -16,8 +17,25 @@ export interface Message {
 export const useMessageStore = defineStore('messages', {
   state: () => ({
     messages: [] as Message[],
-    currentRoomId: -1
+    currentRoomId: -1,
+    socket: null as WebSocket | null
   }),
+  actions: {
+    connect () {
+      if (this.socket == null) {
+        this.socket = connect()
+      }
+    },
+    disconnect () {
+      if (this.socket != null) {
+        this.socket.onclose = null
+        this.socket.close()
+        this.socket = null
+        this.currentRoomId = -1
+        this.messages = []
+      }
+    }
+  },
   getters: {
     getRoomId (state) {
       return state.currentRoomId

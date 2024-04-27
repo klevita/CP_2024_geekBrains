@@ -56,7 +56,9 @@ const props = defineProps<{
 function send () {
   if (model.value) {
     MessageService.sendMessage(model.value)
-    model.value = ''
+    setTimeout(() => {
+      model.value = ''
+    }, 1)
   }
 }
 

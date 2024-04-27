@@ -1,11 +1,10 @@
 import { useMessageStore } from './MessageStore'
-
-const messageStore = useMessageStore()
-// {"identifier":"{\"channel\":\"UserChannel\"}","message":{"kind":"new_room","object":"{\"id\":9,\"name\":\"KEK\"}"}}
+import { useUserStore } from './UserStore'
 
 export function connect () {
-  const ws = new WebSocket(`wss://${process.env.API}/cable?username=user`)
-
+  const messageStore = useMessageStore()
+  const userStore = useUserStore()
+  const ws = new WebSocket(`wss://${process.env.API}/cable?username=${userStore.user.username}`)
   ws.onopen = function () {
     ws.send(JSON.stringify({
       command: 'subscribe',
@@ -41,4 +40,5 @@ export function connect () {
     console.error('Socket encountered error: ', err, 'Closing socket')
     ws.close()
   }
+  return ws
 }

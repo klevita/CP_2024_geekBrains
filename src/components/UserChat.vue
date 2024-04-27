@@ -12,15 +12,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { connect } from 'src/stores/useSocket'
 import UserMessage from './UserMessage.vue'
 import UserMessageSkeleton from './UserMessageSkeleton.vue'
 import { Message, useMessageStore } from 'src/stores/MessageStore'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { MessageService } from 'src/api/services/MessageService'
 import { useUserStore } from 'src/stores/UserStore'
-
-connect()
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
@@ -33,6 +30,9 @@ const messages = computed<Message[]>(() => {
 
 watch(() => messageStore.currentRoomId, async () => {
   oldMessages.value = await MessageService.getMessages(0)
+})
+onMounted(() => {
+  messageStore.connect()
 })
 </script>
 <style scoped lang="scss">
