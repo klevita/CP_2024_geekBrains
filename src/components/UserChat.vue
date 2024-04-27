@@ -1,5 +1,5 @@
 <template>
-  <div class="user-chat" ref="scroll-container">
+  <div class="user-chat" ref="scrollContainer">
     <div
       class="user-chat__scroll-item"
       v-for="message in messages"
@@ -15,7 +15,7 @@
 import UserMessage from './UserMessage.vue'
 import UserMessageSkeleton from './UserMessageSkeleton.vue'
 import { Message, useMessageStore } from 'src/stores/MessageStore'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { MessageService } from 'src/api/services/MessageService'
 import { useUserStore } from 'src/stores/UserStore'
 
@@ -23,6 +23,8 @@ const userStore = useUserStore()
 const messageStore = useMessageStore()
 
 const oldMessages = ref<Message[]>([])
+let oldMessagesOffset = 0
+const oldMessagesLoading = ref(false)
 
 const messages = computed<Message[]>(() => {
   return [...[...messageStore.messages].reverse(), ...oldMessages.value]
@@ -30,18 +32,34 @@ const messages = computed<Message[]>(() => {
 
 const scrollContainer = ref<HTMLDivElement>()
 
-function listenScroll (e: Event) {
-  console.log(e)
+function listenScroll () {
+  if (scrollContainer.value?.clientHeight && scrollContainer.value.scrollHeight) {
+    if (scrollContainer.value.clientHeight - scrollContainer.value.scrollHeight + 100 > scrollContainer.value?.scrollTop) {
+      fetchMessages()
+    }
+  }
 }
 
-watch(() => messageStore.currentRoomId, async () => {
-  oldMessages.value = await MessageService.getMessages(0)
+async function fetchMessages () {
+  if (!oldMessagesLoading.value) {
+    oldMessagesLoading.value = true
+    oldMessages.value = [...oldMessages.value, ...(await MessageService.getMessages(oldMessagesOffset))]
+    oldMessagesOffset += 20
+    oldMessagesLoading.value = false
+  }
+}
+
+watch(() => messageStore.currentRoomId, () => {
+  fetchMessages()
 })
 onMounted(() => {
   messageStore.connect()
   if (scrollContainer.value) {
     scrollContainer.value.addEventListener('scroll', listenScroll)
   }
+})
+onBeforeUnmount(() => {
+  scrollContainer.value?.removeEventListener('scroll', listenScroll)
 })
 </script>
 <style scoped lang="scss">
