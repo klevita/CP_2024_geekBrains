@@ -2,7 +2,7 @@
   <div class="index-page">
     <UserChat class="col-grow full-width" />
     <div class="index-page__input-wrapper">
-      <UserInput class="full-width" v-model="input" />
+      <UserInput v-model="input" />
     </div>
   </div>
 </template>

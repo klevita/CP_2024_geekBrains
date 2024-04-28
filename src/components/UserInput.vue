@@ -11,7 +11,6 @@
   </div>
   <q-input
     placeholder="Какой вопрос вы хотите задать?"
-    autogrow
     class="user-input"
     :class="{ 'user-input-animated': !focused }"
     @focus="focused = true"
@@ -21,33 +20,39 @@
     v-model="model"
   >
     <template #append>
-      <q-btn
-        ref="btn"
-        @click="send()"
-        v-show="model.trim().length"
-        flat
-        rounded
-        color="accent"
-        class="user-input__btn"
-        padding="8px"
-      >
-        <q-icon
-          :name="symRoundedOutgoingMail"
-          size="28px"
-          class="user-input__btn__icon"
-        ></q-icon>
-      </q-btn>
+      <div class="row items-center">
+        <div class="category" v-if="categories?.at(0)">
+          {{ categories.at(0)?.category }}
+        </div>
+        <q-btn
+          ref="btn"
+          @click="send()"
+          v-show="model.trim().length"
+          flat
+          rounded
+          color="accent"
+          class="user-input__btn"
+          padding="8px"
+        >
+          <q-icon
+            :name="symRoundedOutgoingMail"
+            size="28px"
+            class="user-input__btn__icon"
+          ></q-icon>
+        </q-btn>
+      </div>
     </template>
   </q-input>
 </template>
 <script setup lang="ts">
 import { symRoundedOutgoingMail } from '@quasar/extras/material-symbols-rounded'
 import { QBtn, debounce } from 'quasar'
-import { MessageService } from 'src/api/services/MessageService'
+import { Categories, MessageService } from 'src/api/services/MessageService'
 import { spellcheck } from 'src/api/services/SpellCheck'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const focused = ref(false)
+const categories = ref<Categories[]>([])
 
 const model = computed({
   get () {
@@ -64,7 +69,7 @@ const props = defineProps<{
   modelValue: string;
 }>()
 
-function send () {
+async function send () {
   if (model.value) {
     MessageService.sendMessage(model.value)
     setTimeout(() => {
@@ -102,6 +107,7 @@ const formattedSearch = computed(() => {
 
 const searchHandle = async (v: string) => {
   const resp = await spellcheck(v)
+  categories.value = await MessageService.searchMessages(model.value)
   prompt.value = resp
   if (prompt.value && !prompt.value.length) {
     prompt.value = undefined
@@ -148,15 +154,23 @@ watch(model, (v: string) => {
   }
 }
 
-.prompt{
+.prompt {
   position: absolute;
   top: -8px;
   left: 40px;
   cursor: pointer;
   color: rgb(41, 41, 255);
-  &:hover{
+  &:hover {
     text-decoration: underline;
   }
+}
+
+.category {
+  border: 1px solid $primary;
+  height: min-content;
+  border-radius: 4px;
+  padding: 0 8px;
+  color: $primary;
 }
 
 .user-input-animated {
