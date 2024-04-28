@@ -19,8 +19,8 @@
         <div
           class="user-message__text-block__text"
           :class="{ 'q-mt-xs': reverse }"
+          v-html="marked.parse(props.text)"
         >
-          {{ props.text }}
         </div>
       </div>
     </div>
@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { symRoundedNeurology } from '@quasar/extras/material-symbols-rounded'
 import { Message } from 'src/stores/MessageStore'
-import { useUserStore } from 'src/stores/UserStore'
+import { marked } from 'marked'
 
 const props = defineProps<Message & { reverse?: boolean }>()
 </script>

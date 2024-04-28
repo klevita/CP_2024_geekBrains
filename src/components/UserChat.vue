@@ -10,7 +10,6 @@
     >
       <UserMessage :reverse="message.user.name === userStore.user.username" v-bind="message" />
     </div>
-
   </div>
 </template>
 <script setup lang="ts">
