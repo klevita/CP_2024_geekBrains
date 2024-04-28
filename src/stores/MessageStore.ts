@@ -17,7 +17,7 @@ export interface Message {
 export const useMessageStore = defineStore('messages', {
   state: () => ({
     messages: [] as Message[],
-    currentRoomId: -1,
+    currentRoomId: -1 as null | number,
     socket: null as WebSocket | null
   }),
   actions: {

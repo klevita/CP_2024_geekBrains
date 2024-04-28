@@ -33,7 +33,7 @@ const messages = computed<Message[]>(() => {
 })
 
 const lastMessageUser = computed(() => {
-  return messages.value.at(0)?.user?.name !== 'admin' && messages.value.at(0)?.user?.name !== 'manager'
+  return messages.value.at(0)?.user?.name !== 'admin' && messages.value.at(0)?.user?.name !== 'manager' && messages.value.length
 })
 
 const scrollContainer = ref<HTMLDivElement>()

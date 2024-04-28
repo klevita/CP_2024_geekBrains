@@ -1,17 +1,27 @@
 <template>
   <div class="login-wrapper">
     <div class="auth-card">
+      <div class="auth-card__logo">
+        <img :src="svgLogo" style="margin-left: -8px;width:100%" />
+      </div>
       <div class="auth-card-body">
         <q-form @submit="loginUser()" ref="form" class="auth-card-form">
           <q-input v-model="login" :rules="loginRules" label="Логин" />
-          <q-input v-model="pass" type="password" :rules="passRules" label="Пароль" />
+          <q-input v-model="pass" :type="showPass?'text':'password'" :rules="passRules" label="Пароль">
+            <template #append>
+              <q-btn color="black" @click="showPass = !showPass" round flat padding="2px" :icon="showPass?'visibility_off':'visibility'" />
+            </template>
+          </q-input>
         </q-form>
         <div class="auth-card-form-actions">
           <q-checkbox v-model="remeber" density="comfortable" hide-details label="Запомнить меня" />
           <div class="auth-card-form-forgot-link">Забыли пароль?</div>
         </div>
         <div class="auth-card-form-action-btns">
-          <q-btn @click="loginUser()" rounded  color="primary">
+          <q-btn @click="loginGuest()" class="full-width" color="accent">
+            Войти как гость
+          </q-btn>
+          <q-btn @click="loginUser()" class="full-width q-mt-md" color="warning">
             Войти
           </q-btn>
         </div>
@@ -21,12 +31,15 @@
 </template>
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import svgLogo from 'assets/geek-brains-logo.svg'
 import { useUserStore } from 'stores/UserStore'
 import { useRouter } from 'vue-router'
 
 const userStorage = useUserStore()
 const router = useRouter()
 const error = ref(false)
+
+const showPass = ref(false)
 
 const form = ref()
 
@@ -60,6 +73,12 @@ async function loginUser (e?: KeyboardEvent) {
     validate()
   }
 }
+
+function loginGuest () {
+  userStorage.user.username = 'гость'
+  router.push('/')
+}
+
 onMounted(() => {
   document.addEventListener('keypress', loginUser)
 })
@@ -80,11 +99,17 @@ onBeforeUnmount(() => {
   .auth-card {
     border-radius: 20px;
     padding: 24px 30px 4px 30px;
+    width: 440px;
+    max-width: 90vw;
     background-color: white;
-
+    &__logo{
+      display: flex;
+      justify-content: center;
+      padding: 24px;
+    }
     .auth-card-body {
       padding: 24px;
-      min-width: 360px;
+
       text-align: end;
 
       .auth-card-form {
@@ -101,7 +126,8 @@ onBeforeUnmount(() => {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 24px;
+        margin-top: 32px;
+        gap: 20px;
         & > :first-child{
           margin-left: -10px;
         }
@@ -115,8 +141,7 @@ onBeforeUnmount(() => {
       }
 
       .auth-card-form-action-btns {
-        margin-top: 24px;
-        display: flex;
+        margin-top: 32px;
       }
     }
   }

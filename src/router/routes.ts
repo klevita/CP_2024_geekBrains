@@ -24,6 +24,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/LoginPage.vue')
       },
       {
+        name: 'TG',
+        path: '/tg-chat',
+        component: () => import('pages/RedirectPage.vue')
+      },
+      {
         path: '/:catchAll(.*)*',
         component: () => import('pages/MissingPage.vue')
       }
