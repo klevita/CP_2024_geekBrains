@@ -9,7 +9,7 @@
           <q-item-section>
             <div class="row justify-between items-center">
               {{ room.name }}
-              <q-icon color="negative" class="q-ml-sm" size="20px" name="help_outline" />
+              <q-icon v-if="room.human_need" color="negative" class="q-ml-sm" size="20px" name="help_outline" />
             </div>
           </q-item-section>
         </q-item>
@@ -28,6 +28,9 @@ const rooms = ref<Room[]>([])
 
 onMounted(async () => {
   rooms.value = await MessageService.getRooms()
+  setInterval(async () => {
+    rooms.value = await MessageService.getRooms()
+  }, 3000)
 })
 </script>
 <style scoped lang="scss">

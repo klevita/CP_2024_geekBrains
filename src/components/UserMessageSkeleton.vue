@@ -1,13 +1,26 @@
 <template>
-  <div class="user-message-skeleton">
+  <div class="user-message">
     <div>
-      <q-skeleton type="circle" size="xl" />
-      <div class="user-message-skeleton__text-block">
-        <div class="user-message-skeleton__text-block__name">
-          <q-skeleton type="text" height="18px" width="120px" />
+      <q-icon
+        class="user-message__avatar"
+        :color="'primary'"
+        :name="symRoundedNeurology
+        "
+        size="40px"
+      />
+      <div
+        class="user-message__text-block"
+      >
+        <div class="user-message__text-block__name">
+          admin
         </div>
-        <div class="user-message-skeleton__text-block__text">
-          <q-skeleton type="text" width="240px" height="14px" />
+        <div
+          class="user-message__text-block__text"
+        >
+          <q-spinner-dots
+            color="primary"
+            size="2em"
+          />
         </div>
       </div>
     </div>
@@ -15,32 +28,34 @@
   </div>
 </template>
 <script setup lang="ts">
+import { symRoundedNeurology } from '@quasar/extras/material-symbols-rounded'
+
 </script>
 <style scoped lang="scss">
-.user-message-skeleton{
-  width:100%;
-  & > :first-child{
+.user-message {
+  display: flex;
+  width: 100%;
+  & > :first-child {
     display: flex;
-  }
-  &__avatar{
-    background-color: white;
-    border-radius: 50%;
   }
   &__text-block {
     background-color: white;
-    margin-left: 8px;
+    margin: 0 16px;
     border-radius: 16px;
     padding: 8px 16px 12px 16px;
     &__name {
-      display: flex;
-      align-items: center;
-      height: 27px;
+      font-size: 18px;
+      color: $primary;
     }
     &__text {
-      display: flex;
-      align-items: center;
-      height: 21px;
+      overflow-wrap: anywhere;
     }
   }
+}
+.reverse {
+  flex-direction: row-reverse;
+}
+.reverse-color {
+  background-color: rgb(227, 237, 255);
 }
 </style>

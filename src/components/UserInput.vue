@@ -1,6 +1,6 @@
 <template>
   <q-input
-    placeholder="Какой ворос вы хотите задать?"
+    placeholder="Какой вопрос вы хотите задать?"
     autogrow
     class="user-input"
     :class="{ 'user-input-animated': !focused }"

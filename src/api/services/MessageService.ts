@@ -4,7 +4,8 @@ import { Message, useMessageStore } from 'src/stores/MessageStore'
 
 export interface Room {
   id: number,
-  name: string
+  name: string,
+  human_need: boolean
 }
 
 class MessageService {
