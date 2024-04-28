@@ -21,7 +21,7 @@
   >
     <template #append>
       <div class="row items-center">
-        <div class="category" v-if="categories?.at(0)">
+        <div class="category" v-if="categories?.at(0) && !userStore.isAdmin">
           {{ categories.at(0)?.category }}
         </div>
         <q-btn
@@ -49,7 +49,10 @@ import { symRoundedOutgoingMail } from '@quasar/extras/material-symbols-rounded'
 import { QBtn, debounce } from 'quasar'
 import { Categories, MessageService } from 'src/api/services/MessageService'
 import { spellcheck } from 'src/api/services/SpellCheck'
+import { useUserStore } from 'src/stores/UserStore'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
+const userStore = useUserStore()
 
 const focused = ref(false)
 const categories = ref<Categories[]>([])
