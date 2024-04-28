@@ -1,4 +1,14 @@
 <template>
+  <div
+    @click="
+      model = formattedSearch;
+      prompt = undefined;
+    "
+    v-if="prompt"
+    class="prompt"
+  >
+    Возможно вы имели ввиду: {{ formattedSearch }}?
+  </div>
   <q-input
     placeholder="Какой вопрос вы хотите задать?"
     autogrow
@@ -32,9 +42,10 @@
 </template>
 <script setup lang="ts">
 import { symRoundedOutgoingMail } from '@quasar/extras/material-symbols-rounded'
-import { QBtn } from 'quasar'
+import { QBtn, debounce } from 'quasar'
 import { MessageService } from 'src/api/services/MessageService'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { spellcheck } from 'src/api/services/SpellCheck'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const focused = ref(false)
 
@@ -70,11 +81,46 @@ function handleMail (e?: KeyboardEvent) {
   }
 }
 
+const prompt = ref<
+  | {
+      pos: number;
+      len: number;
+      s: string[];
+    }[]
+  | undefined
+>(undefined)
+
+const formattedSearch = computed(() => {
+  let str = model.value
+  if (prompt.value) {
+    prompt.value.forEach((v) => {
+      str = str.slice(0, v.pos) + v.s[0] + str.slice(v.pos + v.len)
+    })
+  }
+  return str
+})
+
+const searchHandle = async (v: string) => {
+  const resp = await spellcheck(v)
+  prompt.value = resp
+  if (prompt.value && !prompt.value.length) {
+    prompt.value = undefined
+  }
+}
+
+const debouncedSearch = debounce(searchHandle, 400)
+
 onMounted(() => {
   document.addEventListener('keypress', handleMail)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('keypress', handleMail)
+})
+
+watch(model, (v: string) => {
+  if (v) {
+    debouncedSearch(v)
+  }
 })
 </script>
 <style scoped lang="scss">
@@ -99,6 +145,17 @@ onBeforeUnmount(() => {
       top: 2px;
       left: 2px;
     }
+  }
+}
+
+.prompt{
+  position: absolute;
+  top: -8px;
+  left: 40px;
+  cursor: pointer;
+  color: rgb(41, 41, 255);
+  &:hover{
+    text-decoration: underline;
   }
 }
 
